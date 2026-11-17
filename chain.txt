@@ -1,0 +1,434 @@
+exp1
+
+sudo apt-get update
+sudo apt-get install openssl -y
+
+mkdir blockchain_crypto
+cd blockchain_crypto
+
+openssl genpkey -algorithm RSA -out private_key.pem -aes256
+
+openssl rsa -in private_key.pem -text -noout
+
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+
+cat private_key.pem
+cat public_key.pem
+Output
+| File Name | Description |
+|---|---|
+| private_key.pem | Encrypted private key |
+| public_key.pem | Public key |
+
+**Private Key Header:**
+`-----BEGIN ENCRYPTED PRIVATE KEY-----`
+
+**Public Key Header:**
+`-----BEGIN PUBLIC KEY-----`
+
+exp2
+
+import hashlib
+import json
+import time
+
+class Block:
+    def __init__(self, index, prev_hash, data, timestamp):
+        self.index = index
+        self.prev_hash = prev_hash
+        self.data = data
+        self.timestamp = timestamp
+        self.hash = self.hash_block()
+
+    def hash_block(self):
+        block_data = {
+            "index": self.index,
+            "prev_hash": self.prev_hash,
+            "data": self.data,
+            "timestamp": self.timestamp
+        }
+        block_string = json.dumps(block_data, sort_keys=True)
+        return hashlib.sha256(block_string.encode()).hexdigest()
+
+
+def create_genesis_block():
+    return Block(0, "0", "Genesis Block", time.time())
+
+
+def next_block(last_block, data):
+    return Block(last_block.index + 1,
+                 last_block.hash, data, time.time())
+
+
+if __name__ == "__main__":
+    blockchain = [create_genesis_block()]
+    previous_block = blockchain[0]
+
+    print("Genesis Block Hash:", previous_block.hash)
+
+    for i in range(1, 6):
+        block_data = f"Block {i} Data"
+        new_block = next_block(previous_block, block_data)
+        blockchain.append(new_block)
+        previous_block = new_block
+
+        print(f"Block #{new_block.index} Hash: {new_block.hash}")
+        print(f"Previous Hash: {new_block.prev_hash}\n")
+
+
+### Expected Output
+- Genesis Block Hash
+- Block 1 Hash
+- Block 2 Hash
+- Block 3 Hash
+- Block 4 Hash
+- Block 5 Hash
+
+exp3
+ Using Remix IDE
+
+1. Open Remix IDE: [Remix IDE](https://remix.live/?utm_source=chatgpt.com)
+2. Create a file named `SimpleStorage.sol`.
+3. Write the following Solidity code.
+4. Click **Compile SimpleStorage.sol**.
+5. Go to **Deploy & Run Transactions**.
+6. Select **Remix VM (Cancun)**.
+7. Click **Deploy**.
+8. Enter a value (42) in the set function.
+9. Click **Transact**.
+10. Click **get** to view the stored value.
+
+Program
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract SimpleStorage {
+    uint256 private storedData;
+
+    function set(uint256 x) public {
+        storedData = x;
+    }
+
+    function get() public view returns (uint256) {
+        return storedData;
+    }
+}
+
+Type 2: Using Ganache
+
+
+sudo apt update
+sudo apt install -y nodejs npm
+
+sudo npm install -g ganache
+
+ganache
+
+**Step 4: Connect Remix**
+1. Open Remix IDE.
+2. Select Deploy & Run Transactions.
+3. Choose External HTTP Provider.
+4. Enter `http://127.0.0.1:8545`.
+5. Click OK.
+6. Check the accounts and ETH balance.
+
+**Step 5: Test Contract**
+
+1. Deploy the contract.
+2. Enter 42 in the set function.
+3. Click Transact.
+4. Click get to verify the value.
+5. Check transaction logs in Ganache terminal.
+
+Output
+- Contract successfully compiled.
+- Contract successfully deployed.
+- Value 42 stored successfully.
+- `get()` displays **42**.
+
+exp4
+ Procedure
+
+**Step 1: Setup MetaMask**
+1. Install MetaMask extension.
+2. Create a wallet.
+3. Enable test networks.
+4. Select Sepolia network.
+5. Get free Sepolia ETH from a faucet.
+
+**Step 2: Create Smart Contract**
+1. Open [Remix IDE](https://remix.live/?utm_source=chatgpt.com).
+2. Create `SimpleStorage.sol`.
+3. Enter the following code.
+
+ Program
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract SimpleStorage {
+    uint256 public storedValue;
+
+    function store(uint256 _value) public {
+        storedValue = _value;
+    }
+
+    function retrieve() public view returns (uint256) {
+        return storedValue;
+    }
+}
+
+**Step 3: Compile Contract**
+1. Open Solidity Compiler.
+2. Select version 0.8.20.
+3. Click Compile.
+
+**Step 4: Connect MetaMask**
+1. Open Deploy & Run Transactions.
+2. Select Injected Provider - MetaMask.
+3. Connect your wallet.
+4. Ensure Sepolia is selected.
+
+**Step 5: Deploy Contract**
+1. Select SimpleStorage.
+2. Click Deploy.
+3. Confirm the transaction in MetaMask.
+4. Wait for confirmation.
+
+**Step 6: Test Contract**
+1. Expand Deployed Contracts.
+2. Enter `123` in the store box.
+3. Click store and confirm.
+4. Click retrieve.
+5. Check the output (123).
+
+### Expected Output
+- Contract compiled successfully.
+- Contract deployed successfully.
+- Stored value: **123**
+- Retrieved value: **123**
+
+exp5
+ Procedure
+
+1. Open Ubuntu Terminal (`Ctrl + Alt + T`).
+python3 --version
+mkdir -p ~/vtu_blockchain_lab
+cd ~/vtu_blockchain_lab
+
+nano crypto_exp5.py
+5. Paste the Python program.
+6. Save using `Ctrl + O`, Enter and `Ctrl + X`.
+7. Run 
+python3 crypto_exp5.py
+
+Program
+
+import hashlib
+import json
+import time
+import uuid
+
+class Block:
+    def __init__(self, index, transactions, prev_hash):
+        self.index = index
+        self.timestamp = time.time()
+        self.transactions = transactions
+        self.prev_hash = prev_hash
+        self.hash = self.calculate_hash()
+
+    def calculate_hash(self):
+        data = json.dumps({
+            'index': self.index,
+            'timestamp': self.timestamp,
+            'transactions': self.transactions,
+            'prev_hash': self.prev_hash
+        }, sort_keys=True)
+        return hashlib.sha256(data.encode()).hexdigest()
+
+
+class Blockchain:
+    def __init__(self):
+        self.chain = []
+        self.current_transactions = []
+        self.create_block('0')
+
+    def create_block(self, prev_hash):
+        block = Block(len(self.chain),
+                      self.current_transactions, prev_hash)
+        self.current_transactions = []
+        self.chain.append(block)
+        return block
+
+    def add_transaction(self, sender, recipient, amount):
+        if float(amount) <= 0:
+            raise ValueError("Invalid amount")
+
+        self.current_transactions.append({
+            'sender': sender,
+            'recipient': recipient,
+            'amount': float(amount),
+            'tx_id': str(uuid.uuid4())[:8]
+        })
+
+    def is_chain_valid(self):
+        for i in range(1, len(self.chain)):
+            current = self.chain[i]
+            previous = self.chain[i-1]
+
+            if current.prev_hash != previous.hash:
+                return False
+
+            if current.hash != current.calculate_hash():
+                return False
+        return True
+
+
+bc = Blockchain()
+
+while True:
+    print("\n1.Add Transaction")
+    print("2.Mine Block")
+    print("3.Display Blockchain")
+    print("4.Check Validity")
+    print("5.Exit")
+
+    choice = input("Enter choice: ")
+
+    if choice == '1':
+        s = input("Sender: ")
+        r = input("Recipient: ")
+        a = input("Amount: ")
+        try:
+            bc.add_transaction(s, r, a)
+            print("Transaction Added")
+        except ValueError as e:
+            print(e)
+
+    elif choice == '2':
+        if bc.current_transactions:
+            b = bc.create_block(bc.chain[-1].hash)
+            print("Block Mined:", b.hash)
+        else:
+            print("No transactions")
+
+    elif choice == '3':
+        for b in bc.chain:
+            print("\nBlock:", b.index)
+            print("Hash:", b.hash)
+            print("Previous Hash:", b.prev_hash)
+            print("Transactions:", b.transactions)
+
+    elif choice == '4':
+        print("Blockchain Valid:", bc.is_chain_valid())
+
+    elif choice == '5':
+        break
+
+    else:
+        print("Invalid Choice")
+
+Output
+
+```text
+1.Add Transaction
+2.Mine Block
+3.Display Blockchain
+4.Check Validity
+5.Exit
+
+Enter choice: 1
+Sender: Alice
+Recipient: Bob
+Amount: 50
+
+Transaction Added
+
+Enter choice: 2
+Block Mined: <block hash>
+
+Enter choice: 4
+Blockchain Valid: True
+
+6th
+
+Procedure
+
+docker --version
+docker compose version
+
+cd ~
+wget https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
+tar -xzf go1.25.0.linux-amd64.tar.gz
+rm go1.25.0.linux-amd64.tar.gz
+
+echo 'export GOROOT=$HOME/go' >> ~/.bashrc
+echo 'export PATH=$HOME/go/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
+
+go version
+
+cd ~
+curl -sSLO https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh
+chmod +x install-fabric.sh
+./install-fabric.sh docker binary samples
+
+cd ~/fabric-samples/test-network
+./network.sh down
+./network.sh up createChannel -c mychannel -ca
+
+./network.sh deployCC -ccn basic -ccp ../asset-transfer-basic/chaincode-go -ccl go
+
+export PATH=$PWD/../bin:$PATH
+export FABRIC_CFG_PATH=$PWD/../config/
+
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_LOCALMSPID="Org1MSP"
+export CORE_PEER_TLS_ROOTCERT_FILE=$PWD/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=$PWD/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+export CORE_PEER_ADDRESS=localhost:7051
+
+ORDERER_CA=$PWD/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+ORG1_CA=$PWD/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+
+ORG2_CA=$PWD/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+
+peer chaincode invoke \
+-o localhost:7050 \
+--ordererTLSHostnameOverride orderer.example.com \
+--tls --cafile "$ORDERER_CA" \
+-C mychannel -n basic \
+--peerAddresses localhost:7051 --tlsRootCertFiles "$ORG1_CA" \
+--peerAddresses localhost:9051 --tlsRootCertFiles "$ORG2_CA" \
+-c '{"function":"InitLedger","Args":[]}'
+
+peer chaincode query \
+-C mychannel -n basic \
+-c '{"function":"GetAllAssets","Args":[]}'
+
+peer chaincode invoke \
+-o localhost:7050 \
+--ordererTLSHostnameOverride orderer.example.com \
+--tls --cafile "$ORDERER_CA" \
+-C mychannel -n basic \
+--peerAddresses localhost:7051 --tlsRootCertFiles "$ORG1_CA" \
+--peerAddresses localhost:9051 --tlsRootCertFiles "$ORG2_CA" \
+-c '{"function":"CreateAsset","Args":["asset7","blue","15","Austin","300"]}'
+
+peer chaincode query \
+-C mychannel -n basic \
+-c '{"function":"ReadAsset","Args":["asset7"]}'
+
+./network.sh down
+
+
+### Expected Output
+
+- Fabric network started successfully.
+- Channel `mychannel` created.
+- Chaincode deployed successfully.
+- Assets asset1 to asset6 displayed.
+- New asset asset7 created successfully.
+- Asset details displayed successfully.
